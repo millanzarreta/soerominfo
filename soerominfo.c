@@ -1,7 +1,7 @@
 /*************************************************************
-SoE Rom Info v0.1 - 2021
+SoE Rom Info v0.2 - 2022
 
-Author: millanzarreta    Date: 17/01/2022
+Author: millanzarreta    Date: 18/01/2022
 
 License: GNU GENERAL PUBLIC LICENSE, Version 3, 29 June 2007
 *************************************************************/
@@ -18,13 +18,14 @@ License: GNU GENERAL PUBLIC LICENSE, Version 3, 29 June 2007
 #include <unistd.h>
 #endif
 
-#define MAX_FILENAME_LEN 4096
+#define MAX_FILENAME_LEN 2048
 #define MAX_STR_LEN 2560
-#define MAX_BUFF_SIZE 20480
+#define MAX_LONGSTR_LEN 10240
+#define MAX_BUFF_SIZE 81920
 
 typedef struct {
 	char filein[MAX_FILENAME_LEN];			// input filename (ROM)
-	char fileout[MAX_FILENAME_LEN];			// output filename (general)
+	char fileout[MAX_FILENAME_LEN+100];		// output filename (general)
 	int type;								// 0 = autodetect, 1 = unheadered ROM, 2 = headered ROM
 	unsigned int hsize;						// header size in bytes
 	char spacer;							// spacer in the scv output file
@@ -167,8 +168,8 @@ typedef struct {
 typedef struct {
 	short int index;
 	char name[MAX_STR_LEN];
-	short int deffense_value_effective;
-	short int deffense_value_visual;
+	short int defense_value_effective;
+	short int defense_value_visual;
 	unsigned short int unknown_pointer1;
 	unsigned short int unknown_value1;
 	short int default_sell_price;
@@ -194,63 +195,63 @@ typedef struct {
 														// All-non-USA: 0xC96EE-0xC97CB [+0x395]; 0xC9A66-0xC9B43! [+0x395]
 	short int magic_defense_per_level[111];			// 0xC9437-0xC9514 (0xDE) = Boy; 0xC97AF-0xC988C = Dog (0xDE) | Magic Defense by level (entries for 0-110, 2 bytes each, Wizard's Coin +7/+5 to used level)
 														// All-non-USA: 0xC97CC-0xC98A9 [+0x395]; 0xC9B44-0xC9C21 [+0x395]
-	char text_level_up_str[MAX_STR_LEN];			// 0xF8388-0xF8397 (0x10) = Boy Text: " reaches level "; 0xF856D-0xF857C (0x10) = Dog Text: " reaches level "
+	char text_level_up_str[MAX_LONGSTR_LEN];		// 0xF8388-0xF8397 (0x10) = Boy Text: " reaches level "; 0xF856D-0xF857C (0x10) = Dog Text: " reaches level "
 														// Europe:  0x51DE8-0x51DF7 [-0xA65A0]; 0x51DE8-0x51DF7 [-0xA6785]
 														// Germany: 0x51F04-0x51F14 [-0xA6484]; 0x51F04-0x51F14 [-0xA6669]
 														// France:  0x41C38-0x41C48 [-0xB6750]; 0x41C38-0x41C48 [-0xB6935]
 														// Spain:   0x41FFD-0x4200D [-0xB638B]; 0x41FFD-0x4200D [-0xB6570]
-	char text_weaponlevel_up_str[MAX_STR_LEN];		// 0xF97B1-0xF97BF (0x0F) = Boy Text: " is now level "; 0xF9801-0xF9816 (0x16) = Dog Text: "Dog attack now level "
+	char text_weaponlevel_up_str[MAX_LONGSTR_LEN];	// 0xF97B1-0xF97BF (0x0F) = Boy Text: " is now level "; 0xF9801-0xF9816 (0x16) = Dog Text: "Dog attack now level "
 														// Europe:  0x51DD9-0x51DE7 [-0xA79D8]; 0x51DC3-0x51DD8 [-0xA7A3E]
 														// Germany: 0x51EF3-0x51F03 [-0xA78BE]; 0x51EDF-0x51EF2 [-0xA7922]
 														// France:  0x41C2B-0x41C37 [-0xB7B86]; 0x41C13-0x41C2A [-0xB7BEE]
 														// Spain:   0x41FED-0x41FFC [-0xB77C4]; 0x41FD4-0x41FEC [-0xB782D]
-	char level_up_func_str[MAX_STR_LEN];											// 0xF8310-0xF8387 (0x78) = Boy's Level Up handled (function); 0xF84F5-0xF856C (0x78) = Dog's Level Up handled (function)
-	unsigned int level_up_func_startaddr;												// Same for ALL!!; All non-USA: 0xF84E5-0xF855C [-0x10]
+	char level_up_func_str[MAX_LONGSTR_LEN];											// 0xF8310-0xF8387 (0x78) = Boy's Level Up handled (function); 0xF84F5-0xF856C (0x78) = Dog's Level Up handled (function)
+	unsigned int level_up_func_startaddr;													// Same for ALL!!; All non-USA: 0xF84E5-0xF855C [-0x10]
 	unsigned int level_up_func_endaddr;
 	unsigned int level_up_func_size;
 	unsigned int level_up_func_crc;
-	char stats_established_func_str[MAX_STR_LEN];									// 0xF8398-0xF84F4 (0x15D) = Boy's stats established (function); 0xF857D-0xF8688 (0x10C) = Dog's stats established (function)
-	unsigned int stats_established_func_startaddr;										// All non-USA: 0xF8388-0xF84E4 [-0x10]; 0xF855D-0xF8668 [-0x20]
+	char stats_established_func_str[MAX_LONGSTR_LEN];									// 0xF8398-0xF84F4 (0x15D) = Boy's stats established (function); 0xF857D-0xF8688 (0x10C) = Dog's stats established (function)
+	unsigned int stats_established_func_startaddr;											// All non-USA: 0xF8388-0xF84E4 [-0x10]; 0xF855D-0xF8668 [-0x20]
 	unsigned int stats_established_func_endaddr;
 	unsigned int stats_established_func_size;
 	unsigned int stats_established_func_crc;
-	char weapon_exp_handling_func_str[MAX_STR_LEN];									// 0xF973E-0xF97B0 (0x73) = Boy's Weapon EXP handling (function); 0xF97C0-0xF9800 (0x41) = Dog's Attack EXP handling (function)
-	unsigned int weapon_exp_handling_func_startaddr;									// All non-USA: 0xF9714-0xF9786 [-0x2A]; 0xF9787-0xF97C7 [-0x39]
+	char weapon_exp_handling_func_str[MAX_LONGSTR_LEN];									// 0xF973E-0xF97B0 (0x73) = Boy's Weapon EXP handling (function); 0xF97C0-0xF9800 (0x41) = Dog's Attack EXP handling (function)
+	unsigned int weapon_exp_handling_func_startaddr;										// All non-USA: 0xF9714-0xF9786 [-0x2A]; 0xF9787-0xF97C7 [-0x39]
 	unsigned int weapon_exp_handling_func_endaddr;
 	unsigned int weapon_exp_handling_func_size;
 	unsigned int weapon_exp_handling_func_crc;
-	char attack_calculation_func_str[MAX_STR_LEN];									// 0xFB75A-0xFB77C (0x23) = Attack Calculations Script (function) $08: Boy Standard; 0xFB77D-0xFB79F (0x23) = Attack Calculations Script (function) $0A: Dog Standard
-	unsigned int attack_calculation_func_startaddr;										// All non-USA: 0xFB70B-0xFB72D [-0x4F]; 0xFB72E-0xFB750 [-0x4F]
+	char attack_calculation_func_str[MAX_LONGSTR_LEN];									// 0xFB75A-0xFB77C (0x23) = Attack Calculations Script (function) $08: Boy Standard; 0xFB77D-0xFB79F (0x23) = Attack Calculations Script (function) $0A: Dog Standard
+	unsigned int attack_calculation_func_startaddr;											// All non-USA: 0xFB70B-0xFB72D [-0x4F]; 0xFB72E-0xFB750 [-0x4F]
 	unsigned int attack_calculation_func_endaddr;
 	unsigned int attack_calculation_func_size;
 	unsigned int attack_calculation_func_crc;
-	char establish_main_ring_info_func_str[MAX_STR_LEN];							// 0xE9A86-0xE9B39 (0xB4) = Script (function) - Establishes Main Ring information for both Boy and Dog
-	unsigned int establish_main_ring_info_func_startaddr;								// Same for ALL!!
+	char establish_main_ring_info_func_str[MAX_LONGSTR_LEN];							// 0xE9A86-0xE9B39 (0xB4) = Script (function) - Establishes Main Ring information for both Boy and Dog
+	unsigned int establish_main_ring_info_func_startaddr;									// Same for ALL!!
 	unsigned int establish_main_ring_info_func_endaddr;
 	unsigned int establish_main_ring_info_func_size;
 	unsigned int establish_main_ring_info_func_crc;
-	char update_palettes_status_outline_func_str[MAX_STR_LEN];						// 0x10C9FC-0x10CA9A (0x9F) = Updates Boy and Dog's Palettes based on Status Outline handling (functions)
-	unsigned int update_palettes_status_outline_func_startaddr;							// All non-USA: 0x10CA01-0x10CA9F [+0x5]
+	char update_palettes_status_outline_func_str[MAX_LONGSTR_LEN];						// 0x10C9FC-0x10CA9A (0x9F) = Updates Boy and Dog's Palettes based on Status Outline handling (functions)
+	unsigned int update_palettes_status_outline_func_startaddr;								// All non-USA: 0x10CA01-0x10CA9F [+0x5]
 	unsigned int update_palettes_status_outline_func_endaddr;
 	unsigned int update_palettes_status_outline_func_size;
 	unsigned int update_palettes_status_outline_func_crc;
-	char update_last2colors_status_outline_func_str[MAX_STR_LEN];					// 0x10CA9B-0x10CBB2 (0x118) = Updates last 2 colors of Boy/Dog's Palette for Status Outline (X is Character; alternates between statuses) (function)
-	unsigned int update_last2colors_status_outline_func_startaddr;						// All non-USA: 0x10CAA0-0x10CBB7 [+0x5]
+	char update_last2colors_status_outline_func_str[MAX_LONGSTR_LEN];					// 0x10CA9B-0x10CBB2 (0x118) = Updates last 2 colors of Boy/Dog's Palette for Status Outline (X is Character; alternates between statuses) (function)
+	unsigned int update_last2colors_status_outline_func_startaddr;							// All non-USA: 0x10CAA0-0x10CBB7 [+0x5]
 	unsigned int update_last2colors_status_outline_func_endaddr;
 	unsigned int update_last2colors_status_outline_func_size;
 	unsigned int update_last2colors_status_outline_func_crc;
-	char establish_current_palette_row_default_and_udpate_func_str[MAX_STR_LEN];	// 0x10CDDC-0x10CE14 (0x39) = Establishes current Palette Row to default one, and also updates Boy/Dog's Palette Row accordingly (Y is entity) (function)
-	unsigned int establish_current_palette_row_default_and_udpate_func_startaddr;		// All non-USA: 0x10CDFF-0x10CE37 [+0x23]
+	char establish_current_palette_row_default_and_udpate_func_str[MAX_LONGSTR_LEN];	// 0x10CDDC-0x10CE14 (0x39) = Establishes current Palette Row to default one, and also updates Boy/Dog's Palette Row accordingly (Y is entity) (function)
+	unsigned int establish_current_palette_row_default_and_udpate_func_startaddr;			// All non-USA: 0x10CDFF-0x10CE37 [+0x23]
 	unsigned int establish_current_palette_row_default_and_udpate_func_endaddr;
 	unsigned int establish_current_palette_row_default_and_udpate_func_size;
 	unsigned int establish_current_palette_row_default_and_udpate_func_crc;
-	char spell_instruction_status_outline_palette_bits_set_func_str[MAX_STR_LEN];	// 0x11AC84-0x11ACBC (0x39) = Spell Instruction $44: Boy and Dog's Status Outline Palette Bits set (function)
-	unsigned int spell_instruction_status_outline_palette_bits_set_func_startaddr;		// All non-USA: 0x11AC64-0x11AC9C [-0x20]
+	char spell_instruction_status_outline_palette_bits_set_func_str[MAX_LONGSTR_LEN];	// 0x11AC84-0x11ACBC (0x39) = Spell Instruction $44: Boy and Dog's Status Outline Palette Bits set (function)
+	unsigned int spell_instruction_status_outline_palette_bits_set_func_startaddr;			// All non-USA: 0x11AC64-0x11AC9C [-0x20]
 	unsigned int spell_instruction_status_outline_palette_bits_set_func_endaddr;
 	unsigned int spell_instruction_status_outline_palette_bits_set_func_size;
 	unsigned int spell_instruction_status_outline_palette_bits_set_func_crc;
-	char update_status_outline_status_removal_func_str[MAX_STR_LEN];				// 0x11BB01-0x11BB26 (0x26) = Updates Boy/Dog's Status Outline according to to status removal (Y is entity) (function)
-	unsigned int update_status_outline_status_removal_func_startaddr;					// All non-USA: 0x11B9F0-0x11BA15 [-0x111]
+	char update_status_outline_status_removal_func_str[MAX_LONGSTR_LEN];				// 0x11BB01-0x11BB26 (0x26) = Updates Boy/Dog's Status Outline according to to status removal (Y is entity) (function)
+	unsigned int update_status_outline_status_removal_func_startaddr;						// All non-USA: 0x11B9F0-0x11BA15 [-0x111]
 	unsigned int update_status_outline_status_removal_func_endaddr;
 	unsigned int update_status_outline_status_removal_func_size;
 	unsigned int update_status_outline_status_removal_func_crc;
@@ -266,8 +267,8 @@ typedef struct {
 //////////////////////
 
 // Function to show the main menu
-void showmenu(char *filename, char *version) {
-	printf("\nSoE ROM Info v%s - 2021 - millanzarreta\n", version);
+void showmenu(char *filename, char *version, int year) {
+	printf("\nSoE ROM Info v%s - %d - millanzarreta\n", version, year);
 	printf("\nUse: %s [options] <file_rom_in> [file_out_name]\n\n", filename);
 	printf("Options:\n");
 	printf("\t-s <char>,      --spacer <char> : spacer for the csv output files. Default: ,\n");
@@ -970,18 +971,19 @@ int main(int argc, char *argv[]) {
 	unsigned char *tmp_buff;
 	unsigned int idf_size;
 	
+	int app_year = 2022;
+	char *app_version = "0.2";
 	char app_filename[MAX_FILENAME_LEN];
-	char *app_version = "0.1";
-	char fileout_rominfo[MAX_FILENAME_LEN+20];
-	char fileout_npcinfo[MAX_FILENAME_LEN+20];
-	char fileout_ingredientsinfo[MAX_FILENAME_LEN+20];
-	char fileout_alchemyinfo[MAX_FILENAME_LEN+20];
-	char fileout_callbeadinfo[MAX_FILENAME_LEN+20];
-	char fileout_weaponinfo[MAX_FILENAME_LEN+20];
-	char fileout_armorinfo[MAX_FILENAME_LEN+20];
-	//char fileout_merchantinfo[MAX_FILENAME_LEN+20];			// TODO: Merchant pending
-	char fileout_boydoginfo[MAX_FILENAME_LEN+20];
-	//char fileout_miscinfo[MAX_FILENAME_LEN+20];				// TODO: Misc pending
+	char fileout_rominfo[MAX_FILENAME_LEN+100];
+	char fileout_npcinfo[MAX_FILENAME_LEN+100];
+	char fileout_ingredientsinfo[MAX_FILENAME_LEN+100];
+	char fileout_alchemyinfo[MAX_FILENAME_LEN+100];
+	char fileout_callbeadinfo[MAX_FILENAME_LEN+100];
+	char fileout_weaponinfo[MAX_FILENAME_LEN+100];
+	char fileout_armorinfo[MAX_FILENAME_LEN+100];
+	//char fileout_merchantinfo[MAX_FILENAME_LEN+100];			// TODO: Merchant pending
+	char fileout_boydoginfo[MAX_FILENAME_LEN+100];
+	//char fileout_miscinfo[MAX_FILENAME_LEN+100];				// TODO: Misc pending
 	
 	int npcStartPoint = 0xEC536;		// All regions
 	int npcEndPoint = 0xEDF84;			// All regions
@@ -1031,17 +1033,17 @@ int main(int argc, char *argv[]) {
 	
 	// Read parameters
 	if (argc < 2) {
-		showmenu(app_filename, app_version);
+		showmenu(app_filename, app_version, app_year);
 		return 1;
 	}
 	if ((strcmp(argv[1],"-?")==0) || (strcmp(argv[1],"--help")==0)) {
-		showmenu(app_filename, app_version);
+		showmenu(app_filename, app_version, app_year);
 		return 0;
 	}
 	int iparam = 1;
 	for(iparam=1; iparam<(argc-1); iparam++) {
 		if ((strcmp(argv[iparam],"-?")==0) || (strcmp(argv[iparam],"--help")==0)) {
-			showmenu(app_filename, app_version);
+			showmenu(app_filename, app_version, app_year);
 			return 0;
 		} else if ((strcmp(argv[iparam],"-t")==0) || (strcmp(argv[iparam],"--type")==0)) {
 			if (++iparam < (argc-1)) {
@@ -1107,7 +1109,7 @@ int main(int argc, char *argv[]) {
 		}
 		remove_ext(param_opt.fileout, '.');
 	} else {
-		char tempInputFilename[MAX_STR_LEN];
+		char tempInputFilename[MAX_FILENAME_LEN];
 		strcpy(tempInputFilename, param_opt.filein);
 		remove_ext(tempInputFilename, '.');
 		remove_path(tempInputFilename);
@@ -1123,7 +1125,7 @@ int main(int argc, char *argv[]) {
 		time_t t = ts.tv_sec;
 		struct tm *tmvp;
 		tmvp = localtime(&t);
-		sprintf(param_opt.fileout, "rominforesult_%s_%02d%02d%02d_%02d%02d%02d_%05d", ((strlen(tempInputFilename)+27u < MAX_FILENAME_LEN) ? tempInputFilename : "res"), tmvp->tm_year%100, tmvp->tm_mon+1, tmvp->tm_mday, tmvp->tm_hour, tmvp->tm_min, tmvp->tm_sec, rand()%90000+10000);
+		sprintf(param_opt.fileout, "rominforesult_%s_%02d%02d%02d_%02d%02d%02d_%05d", ((strlen(tempInputFilename)+34u < MAX_FILENAME_LEN) ? tempInputFilename : "res"), tmvp->tm_year%100, tmvp->tm_mon+1, tmvp->tm_mday, tmvp->tm_hour, tmvp->tm_min, tmvp->tm_sec, rand()%90000+10000);
 		printf("autoNameOut: %s\n", param_opt.fileout);
 	}
 	strcpy(fileout_rominfo, param_opt.fileout);
@@ -1963,8 +1965,8 @@ int main(int argc, char *argv[]) {
 			if ((data_armor_ptr <= 0) || (data_armor_ptr > idf_size)) {
 				armor_info[j].name_ptr = -1;
 				strcpy(armor_info[j].name, "(invalid_ptr)");
-				armor_info[j].deffense_value_effective = 0;
-				armor_info[j].deffense_value_visual = 0;
+				armor_info[j].defense_value_effective = 0;
+				armor_info[j].defense_value_visual = 0;
 				armor_info[j].unknown_pointer1 = 0u;
 				armor_info[j].unknown_value1 = 0u;
 			} else {
@@ -1981,8 +1983,8 @@ int main(int argc, char *argv[]) {
 						conv_romstr_to_ansistr(armor_info[j].name);
 					}
 				}
-				armor_info[j].deffense_value_effective = *(short int *)(armor_data_fullptr+0x00);
-				armor_info[j].deffense_value_visual = *(short int *)(armor_data_fullptr+0x02);
+				armor_info[j].defense_value_effective = *(short int *)(armor_data_fullptr+0x00);
+				armor_info[j].defense_value_visual = *(short int *)(armor_data_fullptr+0x02);
 				armor_info[j].unknown_pointer1 = *(unsigned short int *)(armor_data_fullptr+0x06);
 				armor_info[j].unknown_value1 = *(unsigned short int *)(armor_data_fullptr+0x08);
 			}
@@ -1998,11 +2000,11 @@ int main(int argc, char *argv[]) {
 			return -3;
 		}
 		char buff_line[MAX_BUFF_SIZE];
-		snprintf(buff_line, MAX_BUFF_SIZE, "Index%cArmor Name%cDeffense Effective Value%cDeffense Visual Value%cDefault Sell Price%cUnknown_Pointer1%cUnknown_Value1%c[PTR] Sprite Info%c[PTR] Data Info%c[PTR] Armor Name\n", param_opt.spacer, param_opt.spacer, param_opt.spacer, param_opt.spacer, param_opt.spacer, param_opt.spacer, param_opt.spacer, param_opt.spacer, param_opt.spacer);
+		snprintf(buff_line, MAX_BUFF_SIZE, "Index%cArmor Name%cDefense Effective Value%cDefense Visual Value%cDefault Sell Price%cUnknown_Pointer1%cUnknown_Value1%c[PTR] Sprite Info%c[PTR] Data Info%c[PTR] Armor Name\n", param_opt.spacer, param_opt.spacer, param_opt.spacer, param_opt.spacer, param_opt.spacer, param_opt.spacer, param_opt.spacer, param_opt.spacer, param_opt.spacer);
 		printf("%s", buff_line);
 		fwrite(buff_line, 1, strlen(buff_line)*sizeof(char), idf);
 		for(unsigned int j = 0; j < armor_count; j++) {
-			snprintf(buff_line, MAX_BUFF_SIZE, "%d%c\"%s\"%c%d%c%d%c%d%c0x%04X%c0x%04X%c0x%04X%c0x%06X%c0x%06X\n", armor_info[j].index, param_opt.spacer, armor_info[j].name, param_opt.spacer, armor_info[j].deffense_value_effective, param_opt.spacer, armor_info[j].deffense_value_visual, param_opt.spacer, armor_info[j].default_sell_price, param_opt.spacer, armor_info[j].unknown_pointer1, param_opt.spacer, armor_info[j].unknown_value1, param_opt.spacer, armor_info[j].sprite_info_ptr, param_opt.spacer, armor_info[j].data_ptr, param_opt.spacer, armor_info[j].name_ptr);
+			snprintf(buff_line, MAX_BUFF_SIZE, "%d%c\"%s\"%c%d%c%d%c%d%c0x%04X%c0x%04X%c0x%04X%c0x%06X%c0x%06X\n", armor_info[j].index, param_opt.spacer, armor_info[j].name, param_opt.spacer, armor_info[j].defense_value_effective, param_opt.spacer, armor_info[j].defense_value_visual, param_opt.spacer, armor_info[j].default_sell_price, param_opt.spacer, armor_info[j].unknown_pointer1, param_opt.spacer, armor_info[j].unknown_value1, param_opt.spacer, armor_info[j].sprite_info_ptr, param_opt.spacer, armor_info[j].data_ptr, param_opt.spacer, armor_info[j].name_ptr);
 			printf("%s", buff_line);
 			fwrite(buff_line, 1, strlen(buff_line)*sizeof(char), idf);
 		}
@@ -2051,28 +2053,28 @@ int main(int argc, char *argv[]) {
 		for (int k = 0; k < 111; k++) {
 			// 0xC8E25-0xC8F02 (0xDE) = Boy; 0xC8FE1-0xC90BE = Dog (0xDE) | Evade % by level (entries for 0-110, 2 bytes each, Thug's Cloak +5 to used level)
 				// All-non-USA: 0xC91BA-0xC9297 [+0x395]; 0xC9376-0xC9453! [+0x395]
-			boydog_info[0].evade_per_level[k] = (unsigned short int)*(tmp_buff+boyInfoStartPoint+0x255+(k*2));
-			boydog_info[1].evade_per_level[k] = (unsigned short int)*(tmp_buff+dogInfoStartPoint+0x2E5+(k*2));
+			boydog_info[0].evade_per_level[k] = *(unsigned short int *)(tmp_buff+boyInfoStartPoint+0x255+(k*2));
+			boydog_info[1].evade_per_level[k] = *(unsigned short int *)(tmp_buff+dogInfoStartPoint+0x2E5+(k*2));
 			// 0xC8F03-0xC8FE0 (0xDE) = Boy; 0xC90BF-0xC919C = Dog (0xDE) | Hit % by level (entries for 0-110, 2 bytes each, Jade Disk +5 to used level)
 				// All-non-USA: 0xC9298-0xC9375 [+0x395]; 0xC9454-0xC9531 [+0x395]
-			boydog_info[0].hit_per_level[k] = (unsigned short int)*(tmp_buff+boyInfoStartPoint+0x333+(k*2));
-			boydog_info[1].hit_per_level[k] = (unsigned short int)*(tmp_buff+dogInfoStartPoint+0x3C3+(k*2));
+			boydog_info[0].hit_per_level[k] = *(unsigned short int *)(tmp_buff+boyInfoStartPoint+0x333+(k*2));
+			boydog_info[1].hit_per_level[k] = *(unsigned short int *)(tmp_buff+dogInfoStartPoint+0x3C3+(k*2));
 			// 0xC919D-0xC927A (0xDE) = Boy; 0xC9515-0xC95F2 = Dog (0xDE) | Max HP by level (entries for 0-110, 2 bytes each, Chocobo Egg +5 to used level)
 				// All-non-USA: 0xC9532-0xC960F [+0x395]; 0xC98AA-0xC9987 [+0x395]
-			boydog_info[0].maxhp_per_level[k] = (unsigned short int)*(tmp_buff+boyInfoStartPoint+0x5CD+(k*2));
-			boydog_info[1].maxhp_per_level[k] = (unsigned short int)*(tmp_buff+dogInfoStartPoint+0x819+(k*2));
+			boydog_info[0].maxhp_per_level[k] = *(unsigned short int *)(tmp_buff+boyInfoStartPoint+0x5CD+(k*2));
+			boydog_info[1].maxhp_per_level[k] = *(unsigned short int *)(tmp_buff+dogInfoStartPoint+0x819+(k*2));
 			// 0xC927B-0xC9358 (0xDE) = Boy; 0xC95F3-0xC96D0 = Dog (0xDE) | base Defense by level (entries for 0-110, 2 bytes each, Staff of Life +5 to used level)
 				// All-non-USA: 0xC9610-0xC96ED [+0x395]; 0xC9988-0xC9A65 [+0x395]
-			boydog_info[0].base_defense_per_level[k] = (unsigned short int)*(tmp_buff+boyInfoStartPoint+0x6AB+(k*2));
-			boydog_info[1].base_defense_per_level[k] = (unsigned short int)*(tmp_buff+dogInfoStartPoint+0x8F7+(k*2));
+			boydog_info[0].base_defense_per_level[k] = *(unsigned short int *)(tmp_buff+boyInfoStartPoint+0x6AB+(k*2));
+			boydog_info[1].base_defense_per_level[k] = *(unsigned short int *)(tmp_buff+dogInfoStartPoint+0x8F7+(k*2));
 			// 0xC9359-0xC9436 (0xDE) = Boy; 0xC96D1-0xC97AE = Dog (0xDE) | base Attack by level (entries for 0-110, 2 bytes each, Sun Stone +5 to used level)
 				// All-non-USA: 0xC96EE-0xC97CB [+0x395]; 0xC9A66-0xC9B43! [+0x395]
-			boydog_info[0].base_attack_per_level[k] = (unsigned short int)*(tmp_buff+boyInfoStartPoint+0x789+(k*2));
-			boydog_info[1].base_attack_per_level[k] = (unsigned short int)*(tmp_buff+dogInfoStartPoint+0x9D5+(k*2));
+			boydog_info[0].base_attack_per_level[k] = *(unsigned short int *)(tmp_buff+boyInfoStartPoint+0x789+(k*2));
+			boydog_info[1].base_attack_per_level[k] = *(unsigned short int *)(tmp_buff+dogInfoStartPoint+0x9D5+(k*2));
 			// 0xC9437-0xC9514 (0xDE) = Boy; 0xC97AF-0xC988C = Dog (0xDE) | Magic Defense by level (entries for 0-110, 2 bytes each, Wizard's Coin +7/+5 to used level)
 				// All-non-USA: 0xC97CC-0xC98A9 [+0x395]; 0xC9B44-0xC9C21 [+0x395]
-			boydog_info[0].magic_defense_per_level[k] = (unsigned short int)*(tmp_buff+boyInfoStartPoint+0x867+(k*2));
-			boydog_info[1].magic_defense_per_level[k] = (unsigned short int)*(tmp_buff+dogInfoStartPoint+0xAB3+(k*2));
+			boydog_info[0].magic_defense_per_level[k] = *(unsigned short int *)(tmp_buff+boyInfoStartPoint+0x867+(k*2));
+			boydog_info[1].magic_defense_per_level[k] = *(unsigned short int *)(tmp_buff+dogInfoStartPoint+0xAB3+(k*2));
 		}
 		// 0xF8388-0xF8397 (0x10) = Boy Text: " reaches level "; 0xF856D-0xF857C (0x10) = Dog Text: " reaches level "
 			// Europe:  0x51DE8-0x51DF7 [-0xA65A0]; 0x51DE8-0x51DF7 [-0xA6785]
@@ -2488,6 +2490,8 @@ int main(int argc, char *argv[]) {
 				fwrite(buff_line, 1, strlen(buff_line)*sizeof(char), idf);
 			}
 			snprintf(buff_line, MAX_BUFF_SIZE, "\"0x%06X-0x%06X\"%c%u%c\"%s\"%c0x%08X%c\"0x%06X-0x%06X\"%c%u%c\"%s\"%c0x%08X%c\"0x%06X-0x%06X\"%c%u%c\"%s\"%c0x%08X%c\"0x%06X-0x%06X\"%c%u%c\"%s\"%c0x%08X%c\"0x%06X-0x%06X\"%c%u%c\"%s\"%c0x%08X%c", boydog_info[j].level_up_func_startaddr, boydog_info[j].level_up_func_endaddr, param_opt.spacer, boydog_info[j].level_up_func_size, param_opt.spacer, boydog_info[j].level_up_func_str, param_opt.spacer, boydog_info[j].level_up_func_crc, param_opt.spacer, boydog_info[j].stats_established_func_startaddr, boydog_info[j].stats_established_func_endaddr, param_opt.spacer,  boydog_info[j].stats_established_func_size, param_opt.spacer, boydog_info[j].stats_established_func_str, param_opt.spacer, boydog_info[j].stats_established_func_crc, param_opt.spacer, boydog_info[j].weapon_exp_handling_func_startaddr, boydog_info[j].weapon_exp_handling_func_endaddr, param_opt.spacer,  boydog_info[j].weapon_exp_handling_func_size, param_opt.spacer, boydog_info[j].weapon_exp_handling_func_str, param_opt.spacer, boydog_info[j].weapon_exp_handling_func_crc, param_opt.spacer, boydog_info[j].attack_calculation_func_startaddr, boydog_info[j].attack_calculation_func_endaddr, param_opt.spacer,  boydog_info[j].attack_calculation_func_size, param_opt.spacer, boydog_info[j].attack_calculation_func_str, param_opt.spacer, boydog_info[j].attack_calculation_func_crc, param_opt.spacer, boydog_info[j].establish_main_ring_info_func_startaddr, boydog_info[j].establish_main_ring_info_func_endaddr, param_opt.spacer,  boydog_info[j].establish_main_ring_info_func_size, param_opt.spacer, boydog_info[j].establish_main_ring_info_func_str, param_opt.spacer, boydog_info[j].establish_main_ring_info_func_crc, param_opt.spacer);
+			printf("%s", buff_line);
+			fwrite(buff_line, 1, strlen(buff_line)*sizeof(char), idf);
 			snprintf(buff_line, MAX_BUFF_SIZE, "\"0x%06X-0x%06X\"%c%u%c\"%s\"%c0x%08X%c\"0x%06X-0x%06X\"%c%u%c\"%s\"%c0x%08X%c\"0x%06X-0x%06X\"%c%u%c\"%s\"%c0x%08X%c\"0x%06X-0x%06X\"%c%u%c\"%s\"%c0x%08X%c\"0x%06X-0x%06X\"%c%u%c\"%s\"%c0x%08X\n", boydog_info[j].update_palettes_status_outline_func_startaddr, boydog_info[j].update_palettes_status_outline_func_endaddr, param_opt.spacer,  boydog_info[j].update_palettes_status_outline_func_size, param_opt.spacer, boydog_info[j].update_palettes_status_outline_func_str, param_opt.spacer, boydog_info[j].update_palettes_status_outline_func_crc, param_opt.spacer, boydog_info[j].update_last2colors_status_outline_func_startaddr, boydog_info[j].update_last2colors_status_outline_func_endaddr, param_opt.spacer,  boydog_info[j].update_last2colors_status_outline_func_size, param_opt.spacer, boydog_info[j].update_last2colors_status_outline_func_str, param_opt.spacer, boydog_info[j].update_last2colors_status_outline_func_crc, param_opt.spacer, boydog_info[j].establish_current_palette_row_default_and_udpate_func_startaddr, boydog_info[j].establish_current_palette_row_default_and_udpate_func_endaddr, param_opt.spacer,  boydog_info[j].establish_current_palette_row_default_and_udpate_func_size, param_opt.spacer, boydog_info[j].establish_current_palette_row_default_and_udpate_func_str, param_opt.spacer, boydog_info[j].establish_current_palette_row_default_and_udpate_func_crc, param_opt.spacer, boydog_info[j].spell_instruction_status_outline_palette_bits_set_func_startaddr, boydog_info[j].spell_instruction_status_outline_palette_bits_set_func_endaddr, param_opt.spacer,  boydog_info[j].spell_instruction_status_outline_palette_bits_set_func_size, param_opt.spacer, boydog_info[j].spell_instruction_status_outline_palette_bits_set_func_str, param_opt.spacer, boydog_info[j].spell_instruction_status_outline_palette_bits_set_func_crc, param_opt.spacer, boydog_info[j].update_status_outline_status_removal_func_startaddr, boydog_info[j].update_status_outline_status_removal_func_endaddr, param_opt.spacer,  boydog_info[j].update_status_outline_status_removal_func_size, param_opt.spacer, boydog_info[j].update_status_outline_status_removal_func_str, param_opt.spacer, boydog_info[j].update_status_outline_status_removal_func_crc);
 			printf("%s", buff_line);
 			fwrite(buff_line, 1, strlen(buff_line)*sizeof(char), idf);

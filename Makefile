@@ -1,15 +1,17 @@
-CC := gcc
+CC ?= gcc
 
-CFLAGS = -static
+ifndef NOSTATIC
+	CFLAGS = -static
+else
+	CFLAGS = 
+endif
 ifndef ASSERTS
   CFLAGS += -DNDEBUG
 endif
 ifdef DEBUG
   CFLAGS += -g
 else
-  ifndef OLEVEL
-    OLEVEL = -O3
-  endif
+  OLEVEL ?= -O3
 endif
 ifdef GPROF
   CFLAGS += -pg
